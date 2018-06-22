@@ -4,8 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
-  FlatList
 } from 'react-native';
 import Modal from "react-native-modal";
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -34,6 +32,7 @@ class CreditCardModal extends React.Component {
   }
 
   onCloseForm = () => {
+    this.initialFetch();
     this.setState({ isNewCard: false });
   }
 

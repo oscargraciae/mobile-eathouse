@@ -17,6 +17,7 @@ function CheckoutItem(props) {
       <Image source={{ uri: props.image }} style={styles.image}/>
       <View style={styles.content}>
         <Text style={styles.name}>{props.name}</Text>
+        <Text style={styles.date}>Entrega: {formatDateString(props.deliveryDate, "DD MMMM YYYY")}</Text>
         <Text style={styles.total}>({props.quantity}) ${moneyThousand(props.total)} MX</Text>
       </View>
     </View>

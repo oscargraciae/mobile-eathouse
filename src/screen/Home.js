@@ -25,6 +25,8 @@ class Home extends React.Component {
         <Swiper 
           style={styles.wrapper} 
           showsButtons={false}
+          autoplay
+          autoplayTimeout={4}
           dot={<View style={{backgroundColor: '#FFF', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3, opacity: 0.3}} />}
           activeDot={<View style={{backgroundColor: '#FFF', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
         >

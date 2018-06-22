@@ -8,18 +8,19 @@ import {
   ScrollView
 } from 'react-native';
 import { connect } from 'react-redux';
-import Modal from "react-native-modal";
 
 // import local libraries
 import Colors from '../config/Colors';
 import { moneyThousand } from '../utils/formatNumber';
 import api from '../config/api';
+import { clearCart } from '../actions/cart';
 
 // import components
 import CheckoutItem from '../components/Checkout/CheckoutItem';
 import LoadingView from '../components/LoadingView';
 import AddressModalList from '../components/Checkout/AddressModalList';
 import CreditCardModal from '../components/Checkout/CreditCardModal';
+import AlertCheckout from '../components/Checkout/AlertCheckout';
 
 // create a component
 class Checkout extends Component {
@@ -32,6 +33,9 @@ class Checkout extends Component {
     isOpenModalAddress: false,
     isOpenModalCreditCard: false,
     isLoading: true,
+    checkoutAlert: false,
+    statusCheckout: 0,
+    isSendingOrder: false,
   }
 
   componentDidMount() {
@@ -43,6 +47,7 @@ class Checkout extends Component {
       api.user.getAddress(),
       api.creditCard.getAll(),
     ]);
+
     console.log("Direcciones--->", address, creditCards);
     if(creditCards.length > 0) {
       this.setState({ 
@@ -50,14 +55,38 @@ class Checkout extends Component {
         addressSelected: address[0],
         userAddressId: address[0].id,
         creditCardSelected: creditCards[0],
-        creditCardId: address[0].id
+        creditCardId: creditCards[0].id
       });
     } else {
       this.setState({ 
         isLoading: false, 
         addressSelected: address[0],
         userAddressId: address[0].id,
+        isOpenModalCreditCard: true,
       });
+    }
+  }
+
+  sendOrder = async () => {
+    this.setState({ isSendingOrder: true });
+    const { userAddressId, creditCardId } = this.state;
+    const { data } = this.props.cart;
+    const order = {
+      userAddressId,
+      creditCardId,
+      orderDetails: data,
+    }
+    console.log("Datos enviados-->", order);
+    const response = await api.orders.create(order);
+    console.log("Respuesta save--->", response);
+    if(response.ok) {
+      this.setState({ isSendingOrder: false, checkoutAlert: true, statusCheckout: 0 }, () => {
+        this.props.clearCart();
+      });
+    } else {
+      const { details } = response.err;
+      console.log("Respuesta de error payment--->",  details[0].message);
+      this.setState({ paymentError:  details[0].message, checkoutAlert: true, isSendingOrder: false, statusCheckout: 1 });
     }
   }
 
@@ -69,12 +98,21 @@ class Checkout extends Component {
     this.setState({ isOpenModalCreditCard: !this.state.isOpenModalCreditCard });
   }
 
+  _toggleAlertCheckout = () => {
+    this.setState({ checkoutAlert: !this.state.checkoutAlert });
+  }
+
   _selectedAddress = (address) => {
-    this.setState({ addressSelected: address, userAddressId: address.id });
+    this.setState({ addressSelected: address, userAddressId: address.id, isOpenModalAddress: false });
   }
 
   _selectedCreditCard = (creditCard) => {
-    this.setState({creditCardSelected: creditCard, creditCardId: creditCard.id });
+    this.setState({creditCardSelected: creditCard, creditCardId: creditCard.id, isOpenModalCreditCard: false });
+  }
+
+  paymentSuccess = () => {
+    this.setState({ checkoutAlert: false });
+    this.props.navigation.navigate('Menu');
   }
 
   render() {
@@ -95,6 +133,7 @@ class Checkout extends Component {
       <View style={styles.container}>
         { this.state.isOpenModalAddress && <AddressModalList show={this.state.isOpenModalAddress} toggle={this._toggelModalAddress} userAddressId={this.state.userAddressId} selected={this._selectedAddress} navigate={this.props.navigation.navigate} /> }
         { this.state.isOpenModalCreditCard && <CreditCardModal show={this.state.isOpenModalCreditCard} toggle={this._toggelModalCreditCard} creditCardId={this.state.creditCardId} selected={this._selectedCreditCard} navigate={this.props.navigation.navigate} /> }
+        { this.state.checkoutAlert && <AlertCheckout show={this.state.checkoutAlert} statusCheckout={this.state.statusCheckout} errorMessage={this.state.paymentError} toggle={this._toggleAlertCheckout} paymentSuccess={this.paymentSuccess} /> }
         <ScrollView>
           <View style={styles.containerBox}>
             <Text style={styles.containerTitle}>Dirección de entrega</Text>
@@ -135,9 +174,9 @@ class Checkout extends Component {
             </View>
           </View>
         </ScrollView>
-        <View style={styles.btnCart}>
-          <TouchableOpacity onPress={this.navigationCheckout}>
-            <Text style={styles.btnCartText}>ORDENAR</Text>
+        <View style={[styles.btnCart, (!this.state.creditCardId || !this.state.userAddressId) || this.state.isSendingOrder ? styles.disabled : null]}>
+          <TouchableOpacity onPress={this.sendOrder} disabled={(!this.state.creditCardId || !this.state.userAddressId) || this.state.isSendingOrder}>
+            { this.state.isSendingOrder ? <Text style={styles.btnCartText}>ENVIANDO ORDEN...</Text> : <Text style={styles.btnCartText}>ORDENAR</Text> }
           </TouchableOpacity>
         </View>
       </View>
@@ -201,7 +240,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 5,
-  }
+  },
+  disabled: {
+    backgroundColor: '#a1a7b0'
+  },
 });
 
 const mapStateToProps = (state) => {
@@ -210,4 +252,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Checkout);
+export default connect(mapStateToProps, { clearCart })(Checkout);
