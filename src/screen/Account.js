@@ -34,7 +34,8 @@ class Account extends Component {
         <StatusBar />
         <View style={styles.headerNav}>
           <Text style={styles.name}>Oscar Gracia</Text>
-          <Text style={styles.createdAt}>Usuario desde: Martes 4 abril 2018</Text>
+          <Text style={styles.createdAt}>aquivacorreo@gmail.com</Text>
+          {/* <Text style={styles.createdAt}>Usuario desde: Martes 4 abril 2018</Text> */}
         </View>
         <View style={styles.optionsNav}>
           <TouchableOpacity style={styles.option} onPress={() => this.props.navigation.navigate('Orders')}>
@@ -44,6 +45,10 @@ class Account extends Component {
           <TouchableOpacity style={styles.option} onPress={() => this.props.navigation.navigate('Schedule')}>
             <Ionicon name="ios-calendar-outline" size={20} color={Colors.secondaryText} />
             <Text style={styles.optionText}>Mi agenda</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.option} onPress={() => this.props.navigation.navigate('AvailableZone', { onlyMap: true })}>
+            <Ionicon name="ios-navigate-outline" size={20} color={Colors.secondaryText} />
+            <Text style={styles.optionText}>Zona de cobertura</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.option} onPress={this.onPressLogout}>
             <Ionicon name="ios-power" size={20} color={Colors.secondaryText} />

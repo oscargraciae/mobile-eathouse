@@ -18,7 +18,7 @@ import CreditCardForm from '../CreditCard/CreditCardForm';
 class CreditCardModal extends React.Component {
 
   state = {
-    creditCards: [],
+    creditCards: null,
     isNewCard: false,
   }
 
@@ -42,8 +42,6 @@ class CreditCardModal extends React.Component {
   }
 
   render() {
-    console.log("Propssss--->", this.props);
-    console.log("creditCards-->", this.state.creditCards)
     return (
       <Modal
         isVisible={this.props.show}
@@ -58,12 +56,12 @@ class CreditCardModal extends React.Component {
             {/* <Text style={styles.backEncBtn}>Tu carrito</Text> */}
           </TouchableOpacity>
         </View>
-        { (this.state.isNewCard || this.state.creditCards.length === 0 ) ?
+        { (this.state.isNewCard || !this.state.creditCards) ?
           <View style={styles.form}>
             <CreditCardForm onCloseForm={this.onCloseForm} />
           </View> :
           <View style={styles.modalContent}>
-            <CreditCardList data={this.state.creditCards} {...this.props} />
+          { this.state.creditCards && <CreditCardList data={this.state.creditCards} {...this.props} /> }
             <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isNewCard: true })}>
               <Text style={styles.btnTextContainer}>NUEVA TARJETA</Text>
             </TouchableOpacity>

@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight, TextInput, KeyboardAvoidingView, Image, StatusBar, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight, TextInput, KeyboardAvoidingView, Image, StatusBar, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
 // import local libraries
@@ -27,13 +27,14 @@ class Login extends Component {
       const response = await api.user.authentication(email, password);
       const { ok, user } = response;
       if(ok) {
+        this.setState({ isLoading: false });
         this.props.login(user.token);
-        this.props.navigation.navigate('Menu'); 
+        // this.props.navigation.navigate('Menu'); 
       } else {
         Alert.alert('Aviso', "Verifica tu correo y contraseña", [ {text: 'Aceptar'} ] );
+        this.setState({ isLoading: false });
       }
 
-      this.setState({ isLoading: false });
     }    
   }
 
@@ -48,12 +49,9 @@ class Login extends Component {
   render() {
     const { errors, isLoading } = this.state;
     return (
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <StatusBar backgroundColor="red" />
+      <ScrollView style={styles.container}>
         <View style={styles.loginTop}>
-          {/* <Image source={ require('../images/logo-eathouse.png')} resizeMode="contain" style={styles.logo} /> */}
           <Text style={styles.titleText}>Bienvenido</Text>
-          <Text style={styles.subtitleText}>Saludable y delicioso directo a tu casa u oficina.</Text>
         </View>
         <View style={styles.loginForm}>
           <TextInput style={styles.input}
@@ -90,7 +88,7 @@ class Login extends Component {
           </TouchableOpacity> */}
           
         </View>
-      </KeyboardAvoidingView>
+      </ScrollView>
     );
   }
 }
@@ -99,7 +97,9 @@ class Login extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF'
+    backgroundColor: '#FFF',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
   },
   logo: {
     width: 200,
@@ -126,9 +126,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 40,
   },
   input: {
-    width: 300,
+    width: '100%',
     backgroundColor:'#ffffff',
     paddingVertical: 10,
     fontSize:16,
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 4,
-    width:250,
+    width: '100%',
     marginTop: 20,
   },
   buttonText: {

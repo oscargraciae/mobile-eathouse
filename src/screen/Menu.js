@@ -17,11 +17,8 @@ import Colors from '../config/Colors';
 import { formatDateString, getDateSumDays } from '../utils/formatDate';
 
 // import components
-import MenuList from '../components/Menu/MenuList';
 import List from '../components/Menu/List';
 import Calendar from '../components/Menu/Calendar';
-import LoadingView from '../components/LoadingView';
-import ModalNewAddress from '../components/Address/ModalNewAddress';
 
 // create a component
 class Menu extends Component {
@@ -30,7 +27,7 @@ class Menu extends Component {
     dishes: null,
     user: null,
     total: 0,
-    deliveryDate: '',
+    deliveryDate: null,
     isLoading: true,
     showModaladdress: false,
   }
@@ -39,7 +36,7 @@ class Menu extends Component {
     this.initialFetch();
     const currentTime = formatDateString(new Date(Date.now()), 'HH:mm');
 
-    if(currentTime > "10:00") {
+    if(currentTime > "11:00") {
       let newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 1);
       let date = moment(new Date(newDate), "MM-DD-YYYY", "es").locale("mx");
       if(date.day() === 6) {
@@ -71,6 +68,10 @@ class Menu extends Component {
     ]);
 
     this.setState({ dishes, user, showModaladdress: !user.withAddress });
+    
+    if(!user.withAddress) {
+      this.props.navigation.navigate('NewAddress');
+    }
   }
 
   addCart = (dish, quantity) => {
@@ -93,11 +94,7 @@ class Menu extends Component {
     });
     return (
       <View style={styles.container}>
-       { this.state.user && <ModalNewAddress show={this.state.showModaladdress} onToggle={this.onToggleAddress} /> }
-        
-        {/* {this.state.deliveryDate && <MenuCalendar deliveryDate={this.state.deliveryDate} changeDay={this.changeDay} /> } */}
-        { (this.state.deliveryDate && this.state.dishes) && <Calendar deliveryDate={this.state.deliveryDate} changeDay={this.changeDay} /> }
-        {/* { this.state.dishes && <MenuList data={this.state.dishes} addCart={this.addCart} deliveryDate={this.state.deliveryDate} /> } */}
+        { this.state.deliveryDate && <Calendar deliveryDate={this.state.deliveryDate} changeDay={this.changeDay} /> }
         { this.state.dishes && <List data={this.state.dishes} addCart={this.addCart} deliveryDate={this.state.deliveryDate} /> }
         { this.props.cart.data.length > 0 &&
           <View style={styles.btnCart}>

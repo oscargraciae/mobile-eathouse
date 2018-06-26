@@ -5,18 +5,16 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert
 } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 // import libraries
 import validation from '../../validations/address';
 import api from '../../config/api';
-
-// import components
-import InputAddress from '../Address/InputAddress';
+import { isPointAvailable } from '../../utils/geospatial';
 
 class AddressForm extends React.Component {
-
   state = {
     isAutocomplete: true,
     street: '',
@@ -30,29 +28,35 @@ class AddressForm extends React.Component {
     lng: 0,
     errors: {},
     isLoading: false,
+    addressNotAvailable: false,
   }
 
   onSuggestSelect = (data, details = null) => {
     console.log(data, details);
     const { lat, lng } = details.geometry.location;
-    this.setState({ isAutocomplete: false, addressMap: data.description, lat, lng }, () => {
-      this.fillInAddress(details);
-    });
+    if(isPointAvailable([lng, lat])) {
+      this.setState({ isAutocomplete: false, addressMap: data.description, lat, lng, addressNotAvailable: false }, () => {
+        this.fillInAddress(details);
+      });
+    } else {
+      this.setState({ userLocation: [lat, lng], address: '' });
+      Alert.alert('Aviso', 'Lo sentimos, aún no realizamos entregas en tu dirección. Para ver las zonas de cobertura accede desde las opciones de tu cuenta.');
+    }
+    
   }
 
   onSubmit = async () => {
-    console.log("Guardando...", this.state);
     if(this.isValid()) {
       this.setState({ isLoading: true });
       const response = await api.user.createAddress(this.state);
-      console.log("Respuesta---->", response);
       const { ok, address } = response;
       
       if(ok) {
         this.setState({ isLoading: false }); 
-        if(this.props.toggle) {
-          this.props.toggle();
-        }
+        this.props.onAfterSubmit();
+        // if(this.props.toggle) {
+        //   this.props.toggle();
+        // }
       } else {
         console.log("Ha ocurrido un error");
       }
@@ -77,10 +81,7 @@ class AddressForm extends React.Component {
     for (var i = 0; i < place.address_components.length; i++) {
       var addressType = place.address_components[i].types[0];
       if (componentForm[addressType]) {
-        console.log("Componetedsds--->", componentForm[addressType]);
-        console.log(addressType);
         var val = place.address_components[i][componentForm[addressType]];
-        // let name = document.getElementById(addressType).name;
         if(addressType === 'locality') {
           this.setState({ city: val });
         } else if(addressType === 'administrative_area_level_1') {
@@ -99,9 +100,10 @@ class AddressForm extends React.Component {
             <GooglePlacesAutocomplete
               placeholder='Escribe la dirección (Colonia, Ciudad, Estado)'
               minLength={2}
-              autoFocus={false}
+              autoFocus
               returnKeyType={'default'}
               fetchDetails={true}
+              // nearbyPlacesAPI="None"
               query={{
                 key: 'AIzaSyA-yTAH4cD5Lq3VDwysl-Me5bBek1phNBY',
                 language: 'es',
@@ -111,12 +113,10 @@ class AddressForm extends React.Component {
                 textInputContainer: {
                   backgroundColor: '#FFF',
                   borderTopWidth: 0,
-                  borderBottomWidth:0
                 },
                 textInput: {
                   marginLeft: 0,
                   marginRight: 0,
-                  height: 38,
                   color: '#5d5d5d',
                   fontSize: 16
                 },
@@ -125,6 +125,8 @@ class AddressForm extends React.Component {
                 },
               }}
               currentLocation={false}
+              currentLocationLabel="Ubicación actual"
+              filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
             />
           </View> :
           <View style={styles.formContent}>
@@ -159,18 +161,16 @@ class AddressForm extends React.Component {
             { errors.zipcode && <Text style={styles.error}>{errors.zipcode}</Text> }
             
             <TouchableOpacity style={styles.buttonContainer} onPress={this.onSubmit}>
-              { !isLoading && <Text style={styles.buttonText}>GUARDAR</Text>}
-              { isLoading && <Text style={styles.buttonText}>CARGANDO...</Text>}
+              { !isLoading ? <Text style={styles.buttonText}>GUARDAR</Text> : isLoading && <Text style={styles.buttonText}>CARGANDO...</Text> }
             </TouchableOpacity>
 
-            { !this.props.onClose &&
+            { this.props.onClose &&
               <TouchableOpacity style={styles.buttonDefault} onPress={this.props.toggle}>
                 <Text style={styles.buttonDefaultText}>CANCELAR</Text>
               </TouchableOpacity>
-            }
-            
+            }    
           </View>
-      }
+        }
       </View>
     )
   }
@@ -180,12 +180,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 15,
+    backgroundColor: '#FFF',
   },
   autocomplete: {
     flex: 1,
   },
   input: {
-    width: 300,
+    width: '100%',
     backgroundColor:'#ffffff',
     paddingVertical: 10,
     fontSize:16,

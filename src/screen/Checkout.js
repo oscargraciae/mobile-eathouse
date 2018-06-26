@@ -131,7 +131,7 @@ class Checkout extends Component {
 
     return (
       <View style={styles.container}>
-        { this.state.isOpenModalAddress && <AddressModalList show={this.state.isOpenModalAddress} toggle={this._toggelModalAddress} userAddressId={this.state.userAddressId} selected={this._selectedAddress} navigate={this.props.navigation.navigate} /> }
+        { this.state.isOpenModalAddress && <AddressModalList show={this.state.isOpenModalAddress} toggle={this._toggelModalAddress} userAddressId={this.state.userAddressId} selected={this._selectedAddress} navigate={this.props.navigation.navigate} {...this.props} /> }
         { this.state.isOpenModalCreditCard && <CreditCardModal show={this.state.isOpenModalCreditCard} toggle={this._toggelModalCreditCard} creditCardId={this.state.creditCardId} selected={this._selectedCreditCard} navigate={this.props.navigation.navigate} /> }
         { this.state.checkoutAlert && <AlertCheckout show={this.state.checkoutAlert} statusCheckout={this.state.statusCheckout} errorMessage={this.state.paymentError} toggle={this._toggleAlertCheckout} paymentSuccess={this.paymentSuccess} /> }
         <ScrollView>
@@ -144,14 +144,6 @@ class Checkout extends Component {
           </View>
 
           <View style={styles.containerBox}>
-            <Text style={styles.containerTitle}>Metodo de Pago</Text>
-            { creditCardSelected && <Text style={styles.containerDescription}>{creditCardSelected.brand} **** **** **** {creditCardSelected.last4}</Text> }
-            <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isOpenModalCreditCard: true })}>
-              <Text style={styles.btnTextContainer}>CAMBIAR</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.containerBox}>
             <Text style={styles.containerTitle}>Resumen</Text>
             { data.map((item, index) => {
               return (
@@ -159,6 +151,14 @@ class Checkout extends Component {
               )
             }) }
           </View>
+          <View style={styles.containerBox}>
+            <Text style={styles.containerTitle}>Metodo de Pago</Text>
+            { creditCardSelected && <Text style={styles.containerDescription}>{creditCardSelected.brand} **** **** **** {creditCardSelected.last4}</Text> }
+            <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isOpenModalCreditCard: true })}>
+              <Text style={styles.btnTextContainer}>CAMBIAR</Text>
+            </TouchableOpacity>
+          </View>
+          
           <View style={styles.content}>
             <View style={styles.contentItemPrice}>
               <Text>Subtototal</Text>

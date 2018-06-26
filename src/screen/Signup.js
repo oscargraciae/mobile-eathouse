@@ -1,6 +1,14 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight, TextInput, KeyboardAvoidingView, Image, StatusBar, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TextInput, 
+  KeyboardAvoidingView,
+  ScrollView,
+  TouchableOpacity
+} from 'react-native';
 import { connect } from 'react-redux';
 
 // import local libraries
@@ -40,11 +48,9 @@ class Signup extends Component {
           this.props.navigation.navigate('Menu'); 
         }        
       } else {
-        
-  
-        this.setState({ errorsServer: res.errors });
+        this.setState({ errorsServer: res.errors, isLoading: false });
       }
-      this.setState({ isLoading: false });
+      // this.setState({ isLoading: false });
     }    
   }
 
@@ -59,7 +65,8 @@ class Signup extends Component {
   render() {
     const { errors, isLoading, errorsServer } = this.state;
     return (
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      // <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <ScrollView style={styles.container}>
         {/* <Image source={ require('../images/hero-edit-2.jpg')} resizeMode="contain" style={styles.logo} /> */}
         <View style={styles.loginForm}>
           <TextInput style={styles.input}
@@ -118,7 +125,7 @@ class Signup extends Component {
           </TouchableOpacity> */}
           
         </View>
-      </KeyboardAvoidingView>
+      </ScrollView>
     );
   }
 }
@@ -127,7 +134,8 @@ class Signup extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF'
+    backgroundColor: '#FFF',
+    paddingHorizontal: 10,
   },
   logo: {
     width: '100%',
@@ -157,7 +165,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
   },
   input: {
-    width: 300,
+    width: '100%',
     backgroundColor:'#ffffff',
     paddingVertical: 10,
     fontSize:16,
@@ -171,7 +179,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 4,
-    width: 300,
+    width: '100%',
     marginTop: 20,
   },
   buttonText: {

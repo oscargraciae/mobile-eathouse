@@ -10,14 +10,10 @@ import Login from '../screen/Login';
 import Tabs from '../routes/Tabs';
 import Checkout from '../screen/Checkout';
 import NewAddress from '../screen/NewAddress';
+import AvailableZone from '../screen/AvailableZone';
+import Addresses from '../screen/Addresses';
 
 const Root = StackNavigator({ 
-  // Login: {
-  //   screen: Login,
-  //   navigationOptions: {
-  //     header: null,
-  //   }
-  // },
   Tabs: {
     screen: Tabs
   },
@@ -34,14 +30,12 @@ const Root = StackNavigator({
   },
   NewAddress: {
     screen: NewAddress,
-    navigationOptions: ({ navigation }) => ({
-      headerTitle: 'Nueva dirección',
-      headerLeft: (
-        <TouchableHighlight style={styles.btnBack} onPress={() => navigation.goBack()}>
-          <Ionicon name="md-arrow-back" size={25} color="#333" />
-        </TouchableHighlight>
-      )
-    })
+  },
+  AvailableZone: {
+    screen: AvailableZone,
+  },
+  Addresses: {
+    screen: Addresses,
   },
 }, { 
   initialRouteName: 'Tabs',

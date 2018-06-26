@@ -4,8 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
-  FlatList
 } from 'react-native';
 import Modal from "react-native-modal";
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -15,7 +13,6 @@ import api from '../../config/api';
 
 // import components
 import AddressList from '../Address/AddressList';
-import InputAddress from '../Address/InputAddress';
 import AddressForm from '../Address/AddressForm';
 
 class AddressModalList extends React.Component {
@@ -39,8 +36,12 @@ class AddressModalList extends React.Component {
     this.props.toggle();
   }
 
+  onAfterSubmit = () => {
+    this.initialFetch();
+    this.setState({ isNewAddress: false });
+  }
+
   render() {
-    console.log("Propssss--->", this.props);
     return (
       <Modal
         isVisible={this.props.show}
@@ -52,18 +53,17 @@ class AddressModalList extends React.Component {
         <View style={styles.modalHeader}>
           <TouchableOpacity style={styles.btnBack} onPress={this.onPressClose} >
             <Ionicon name="md-close" size={30} style={styles.backEncBtn}/>
-            {/* <Text style={styles.backEncBtn}>Tu carrito</Text> */}
           </TouchableOpacity>
         </View>
         { !this.state.isNewAddress ?
           <View style={styles.modalContent}>
-             { this.state.address && <AddressList data={this.state.address} {...this.props} /> }
+            { this.state.address && <AddressList data={this.state.address} {...this.props} /> }
             <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isNewAddress: true })}>
               <Text style={styles.btnTextContainer}>NUEVA DIRECCIÓN</Text>
             </TouchableOpacity>
           </View> :
           <View style={styles.addressForm}>
-            <AddressForm {...this.props}/>
+            <AddressForm {...this.props} onAfterSubmit={this.onAfterSubmit} />
           </View>
         }
       </Modal>

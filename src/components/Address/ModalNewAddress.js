@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity
 } from 'react-native';
 import Modal from "react-native-modal";
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -11,9 +10,6 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 import AddressForm from './AddressForm';
 
 class ModalNewAddress extends React.Component {
-
-
-
   render() {
     return (
       <Modal
@@ -23,12 +19,6 @@ class ModalNewAddress extends React.Component {
         backdropOpacity={1}
         supportedOrientations={['portrait', 'landscape']}
       >
-        <View style={styles.modalHeader}>
-          {/* <TouchableOpacity style={styles.btnBack} onPress={this.onPressClose} >
-            <Ionicon name="md-close" size={30} style={styles.backEncBtn}/>
-          </TouchableOpacity> */}
-          
-        </View>
         <View style={styles.addressForm}>
           <Text style={styles.title}>¡INGRESA TU DIRECCIÓN Y EMPIZA A ORDENAR!</Text>
           <AddressForm {...this.props} onClose={false} toggle={this.props.onToggle}/>
@@ -43,6 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
     margin: 0,
+
   },
   modalHeader: {
     flexDirection: 'row',
@@ -53,6 +44,7 @@ const styles = StyleSheet.create({
   },
   addressForm: {
     flex: 1,
+    paddingVertical: 20,
   },
   btnBack: {
     flexDirection: 'row',

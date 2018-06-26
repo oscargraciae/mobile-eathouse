@@ -10,7 +10,7 @@ import AddressItem from './AddressItem';
 
 class AddressList extends React.Component {
 
-  _keyExtractor = (item, index) => item.id.toString();
+  _keyExtractor = (item, index) => index;
 
   _renderItem = ({ item }) => {
     return (

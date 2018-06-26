@@ -6,12 +6,20 @@ import {
   Image,
   ImageBackground,
   StatusBar,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import Dimensions from 'Dimensions';
 
 class Home extends React.Component {
+  
+  getWidth() {
+    return Dimensions.get('window').width;
+  }
+
   render() {
+    const width = this.getWidth();
     return (
       <ImageBackground
         style={styles.imageContainer}
@@ -23,10 +31,11 @@ class Home extends React.Component {
         <Text style={styles.title}>Saludable y delicioso directo a tu casa u oficina.</Text>
 
         <Swiper 
-          style={styles.wrapper} 
+          style={styles.wrapper}
           showsButtons={false}
           autoplay
           autoplayTimeout={4}
+          containerStyle={{width}}
           dot={<View style={{backgroundColor: '#FFF', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3, opacity: 0.3}} />}
           activeDot={<View style={{backgroundColor: '#FFF', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
         >
@@ -34,11 +43,11 @@ class Home extends React.Component {
             <Text style={styles.textTitle}>Elige tu comida</Text>
             <Text style={styles.textDescription}>Selecciona de una variedad de platillos que tenemos disponibles.</Text>
           </View>
-          <View style={styles.slider}>
+          <View style={styles.slider2}>
             <Text style={styles.textTitle}>Ordena o programa</Text>
             <Text style={styles.textDescription}>Ordena tus platillos o programa por adelantado para la semana. Disponible de Lunes a Viernes.</Text>
           </View>
-          <View style={styles.slider}>
+          <View style={styles.slider3}>
             <Text style={styles.textTitle}>Disfruta tu comida</Text>
             <Text style={styles.textDescription}>Tu orden será entregada a la puerta de tu casa u oficina entre 12:30 pm y la 1:30 pm</Text>
           </View>
@@ -77,7 +86,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#FFF',
-    fontSize: 21,
+    fontSize: Platform.OS === 'ios' ? 21 : 16,
     paddingHorizontal: 20,
     textAlign: 'center',
   },
@@ -103,17 +112,34 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   buttonDefault: {
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingHorizontal: 30,
     width: 300,
-    marginTop: 30,
   },
   buttonDefaultText: {
     textAlign: 'center',
     color: '#FFF',
-    fontWeight: '700'
+    fontWeight: '700',
+    fontSize: Platform.OS === 'ios' ? 14 : 12,
+  },
+  wrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   slider: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+  },
+  slider2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+  },
+  slider3: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -123,13 +149,13 @@ const styles = StyleSheet.create({
     color: '#FFF',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: Platform.OS === 'ios' ? 16 : 14,
     paddingVertical: 15,
   },
   textDescription: {
     color: '#FFF',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: Platform.OS === 'ios' ? 16 : 12,
   }
 })
 

@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import Conekta from 'react-native-conekta';
@@ -98,7 +99,7 @@ class CreditCardForm extends React.Component {
   render() {
     const { errors, isLoading } = this.state;
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.formContent}>  
             <Text style={styles.inputLabel}>Nombre como aparece en la tarjeta</Text>
             <TextInput style={styles.input}
@@ -148,6 +149,7 @@ class CreditCardForm extends React.Component {
                 <TextInput style={styles.input}
                   placeholder="CVV"
                   returnKeyType="next"
+                  keyboardType="numeric"
                   autoCapitalize="none"
                   onChangeText={(cvv) => this.setState({ cvv })}
                   placeholderTextColor="#DDD"
@@ -171,7 +173,7 @@ class CreditCardForm extends React.Component {
             }
             
           </View>
-      </View>
+      </ScrollView>
     )
   }
 }

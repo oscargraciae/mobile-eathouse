@@ -1,12 +1,15 @@
 {
   "name": "eathouse",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"
   },
   "dependencies": {
+    "@turf/buffer": "^5.1.5",
+    "@turf/collect": "^6.0.1",
+    "@turf/turf": "^5.1.6",
     "axios": "^0.18.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.10",

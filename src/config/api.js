@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = 'http://localhost:3001/api/v1';
+// axios.defaults.baseURL = 'http://localhost:3001/api/v1';
 
-// axios.defaults.baseURL = 'https://api.eathouse.mx/api/v1/';
+axios.defaults.baseURL = 'https://api.eathouse.mx/api/v1/';
 
 const api = {
   user: {
