@@ -10,7 +10,6 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 import Colors from '../../config/Colors';
 
 function CreditCardItem (props) {
-  console.log("ITEMPRS-->", props);
   return (
     <TouchableOpacity style={styles.item} onPress={() => props.selected(props)}>
       <View style={styles.content}>

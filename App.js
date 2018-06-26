@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
-import createExpirationTransform from 'redux-persist-transform-expire';
+// import createExpirationTransform from 'redux-persist-transform-expire';
 
 // import local libraries
 import store from './src/redux/store';
@@ -21,9 +21,9 @@ import store from './src/redux/store';
 import AuthNavigation from './src/routes/AuthNavigation';
 import LoadingView from './src/components/LoadingView';
 
-// if (UIManager.setLayoutAnimationEnabledExperimental) {
-//   UIManager.setLayoutAnimationEnabledExperimental(true);
-// }
+if (UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 class App extends Component {
 
@@ -32,17 +32,17 @@ class App extends Component {
   }
 
    componentDidMount() {
-    const expireTransform = createExpirationTransform({
-      expireKey: 'persistExpiresAt',
-      defaultState: {
-        data: [],
-      }
-    });
+    // const expireTransform = createExpirationTransform({
+    //   expireKey: 'persistExpiresAt',
+    //   defaultState: {
+    //     data: [],
+    //   }
+    // });
     persistStore(
       store, {
         storage: AsyncStorage,
         whitelist: [ 'authentication', 'cart' ],
-        transforms: [expireTransform]
+        // transforms: [expireTransform]
       }, () => this.setState({ ready: true })
     );
   }

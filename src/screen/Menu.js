@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import decode from 'jwt-decode';
 
 // import local libraries
 import api from '../config/api';
 import { addToCart } from '../actions/cart';
 import Colors from '../config/Colors';
-import { formatDateString, getDateSumDays } from '../utils/formatDate';
+import { formatDateString, getDateSumDays, getMomentDate } from '../utils/formatDate';
 
 // import components
 import List from '../components/Menu/List';
@@ -38,7 +37,7 @@ class Menu extends Component {
 
     if(currentTime > "11:00") {
       let newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 1);
-      let date = moment(new Date(newDate), "MM-DD-YYYY", "es").locale("mx");
+      let date = getMomentDate(newDate);
       if(date.day() === 6) {
         newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 3);
       } else if(date.day() === 0) {
@@ -50,6 +49,16 @@ class Menu extends Component {
       const newDate = formatDateString(new Date(Date.now()), 'YYYY/MM/DD');
       this.setState({ deliveryDate: newDate, isTime: true });
     }
+
+    // let newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 1);
+    // let date = getMomentDate();
+    // if(date.day() === 6) {
+    //   newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 3);
+    // } else if(date.day() === 0) {
+    //   newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 2);
+    // }
+
+    // this.setState({ deliveryDate: newDate, isTime: false });
 
     this.setState({ isLoading: false });
   }

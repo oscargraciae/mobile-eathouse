@@ -18,7 +18,7 @@ import CreditCardForm from '../CreditCard/CreditCardForm';
 class CreditCardModal extends React.Component {
 
   state = {
-    creditCards: null,
+    creditCards: [],
     isNewCard: false,
   }
 
@@ -42,6 +42,7 @@ class CreditCardModal extends React.Component {
   }
 
   render() {
+    console.log("Cards->", this.state.creditCards);
     return (
       <Modal
         isVisible={this.props.show}
@@ -53,17 +54,17 @@ class CreditCardModal extends React.Component {
         <View style={styles.modalHeader}>
           <TouchableOpacity style={styles.btnBack} onPress={this.onPressClose} >
             <Ionicon name="md-close" size={30} style={styles.backEncBtn}/>
-            {/* <Text style={styles.backEncBtn}>Tu carrito</Text> */}
           </TouchableOpacity>
         </View>
-        { (this.state.isNewCard || !this.state.creditCards) ?
+        { (this.state.isNewCard || this.state.creditCards.length === 0) ?
           <View style={styles.form}>
             <CreditCardForm onCloseForm={this.onCloseForm} />
           </View> :
           <View style={styles.modalContent}>
-          { this.state.creditCards && <CreditCardList data={this.state.creditCards} {...this.props} /> }
+          <Text style={{ fontWeight: 'bold', paddingLeft: 10, marginBottom: 20, fontSize: 16 }}>Selecciona un método de pago</Text>
+          { this.state.creditCards.length > 0 && <CreditCardList data={this.state.creditCards} {...this.props} /> }
             <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isNewCard: true })}>
-              <Text style={styles.btnTextContainer}>NUEVA TARJETA</Text>
+              <Text style={styles.btnTextContainer}>AÑADIR UNA NUEVA TARJETA</Text>
             </TouchableOpacity>
           </View> 
         }
@@ -146,10 +147,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderColor: '#DDD',
     alignItems: 'center',
+    backgroundColor: Colors.secondary,
   },
   btnTextContainer: {
     fontWeight: 'bold',
-    color: Colors.secondary,
+    color: '#FFFFFF',
   },
 })
 

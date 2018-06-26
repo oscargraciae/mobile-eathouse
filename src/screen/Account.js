@@ -32,11 +32,11 @@ class Account extends Component {
     return (
       <View style={styles.container}>
         <StatusBar />
-        <View style={styles.headerNav}>
+        {/* <View style={styles.headerNav}>
           <Text style={styles.name}>Oscar Gracia</Text>
           <Text style={styles.createdAt}>aquivacorreo@gmail.com</Text>
-          {/* <Text style={styles.createdAt}>Usuario desde: Martes 4 abril 2018</Text> */}
-        </View>
+          <Text style={styles.createdAt}>Usuario desde: Martes 4 abril 2018</Text>
+        </View> */}
         <View style={styles.optionsNav}>
           <TouchableOpacity style={styles.option} onPress={() => this.props.navigation.navigate('Orders')}>
             <Ionicon name="ios-paper-outline" size={20} color={Colors.secondaryText} />

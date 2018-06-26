@@ -1,6 +1,9 @@
 import momentTz from 'moment-timezone';
 import moment from 'moment';
 
+import 'moment/min/moment-with-locales'
+import 'moment/locale/es'
+
 export function formatDate(value) {
   let newDate = new Date(value);
   var date = momentTz.tz(newDate, "America/Monterrey");
@@ -31,4 +34,33 @@ export function getDateSumDays(value, format, sumDays) {
   
   console.log("dateFormat", dateFormat);
   return dateFormat;
+}
+
+export function getMomentDate(date) {
+  moment.locale("es");
+  var newDate = moment(new Date(date), "MM-DD-YYYY");
+  return newDate;
+}
+
+export function getMomentDateByFormat(date, format) {
+  moment.locale("es");
+  var newDate = moment(date, "MM-DD-YYYY", "es").format(format);
+  return newDate;
+}
+
+export function getDaysByMoment(date, format) {
+  moment.locale("es");
+  var newDate = moment(date, format);
+
+  const day = newDate.day();
+  let weekDayName = newDate.format('ddd');
+  let weekDayNumber = newDate.format('DD');
+  let dayTime = newDate.format('HH:mm');
+
+  return {
+    day,
+    weekDayName,
+    weekDayNumber,
+    dayTime,
+  };
 }

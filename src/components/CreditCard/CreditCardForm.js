@@ -126,7 +126,7 @@ class CreditCardForm extends React.Component {
   
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <View style={{ flex: 1, paddingRight: 10 }}>
-                <Text style={styles.inputLabel}>Fecha de vencimiento</Text>
+                <Text style={styles.inputLabel}>Vencimiento (MM/AA)</Text>10
                 <TextInputMask
                   refInput={(ref) => this.myDate = ref}
                   type={'datetime'}
@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontWeight: 'bold',
+    fontSize: 11,
   },
   buttonContainer: {
     backgroundColor: Colors.secondary,

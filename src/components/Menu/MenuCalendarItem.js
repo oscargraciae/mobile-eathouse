@@ -5,28 +5,22 @@ import {
   StyleSheet,
   TouchableOpacity
 } from 'react-native';
-import moment from 'moment';
-import 'moment/min/moment-with-locales'
-import 'moment/locale/es'
+
+import { getDaysByMoment, getMomentDateByFormat, getMomentDate } from '../../utils/formatDate';
 
 function MenuCalendarItem(props) {
-  let date = moment(props.date, "MM-DD-YYYY", "es").locale("es");
-  let selectedDay =  moment(props.selectedDate, "MM-DD-YYYY", "es").locale("mx").format('DD');
+  
+  let { day, weekDayName, weekDayNumber, dayTime, } = getDaysByMoment(props.date, "MM-DD-YYYY");
+  let selectedDay = getMomentDateByFormat(props.selectedDate, "DD");
 
-  const day = date.day();
-  let completeDate = date.format('DD/MM/YYYY');
-  let weekDayName = date.format('ddd');
-  let weekDayNumber = date.format('DD');
-  let dayTime = date.format('HH:mm');
-
-  let currentDate = moment(new Date(Date.now()), "MM-DD-YYYY", "es").locale("mx");
+  // let currentDate = getMomentDate(Date.now());
   
   let invalidCurrentDate = false;
-  if(currentDate.format('DD') === weekDayNumber) {
-    if(dayTime > "10:00") {
-      invalidCurrentDate = true;
-    }
-  }
+  // if(currentDate.format('DD') === weekDayNumber) {
+  //   if(dayTime > "10:00") {
+  //     invalidCurrentDate = true;
+  //   }
+  // }
 
   return (
     <TouchableOpacity

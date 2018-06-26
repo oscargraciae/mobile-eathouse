@@ -5,7 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
@@ -94,7 +95,7 @@ class AddressForm extends React.Component {
   render() {
     const { errors, isLoading } = this.state;
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         { this.state.isAutocomplete ?
           <View style={styles.autocomplete}>
             <GooglePlacesAutocomplete
@@ -171,7 +172,7 @@ class AddressForm extends React.Component {
             }    
           </View>
         }
-      </View>
+      </ScrollView>
     )
   }
 }
