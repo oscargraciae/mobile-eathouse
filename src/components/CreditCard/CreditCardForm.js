@@ -14,6 +14,7 @@ import Conekta from 'react-native-conekta';
 
 import validation from '../../validations/credit-card';
 import api from '../../config/api';
+import { CONEKTA_KEY } from '../../config/consts';
 
 class CreditCardForm extends React.Component {
 
@@ -34,7 +35,8 @@ class CreditCardForm extends React.Component {
     if(this.isValid()) {
       this.setState({ isLoading: true });
       var conektaApi = new Conekta();
-      conektaApi.setPublicKey("key_JEnHKPz6vGyz5rmzC75F6hg");
+      // conektaApi.setPublicKey("key_JEnHKPz6vGyz5rmzC75F6hg");
+      conektaApi.setPublicKey(CONEKTA_KEY);
       const { name, creditCardNumber, monthEx, yearEx, cvv } = this.state;
       
       conektaApi.createToken({
@@ -126,7 +128,7 @@ class CreditCardForm extends React.Component {
   
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <View style={{ flex: 1, paddingRight: 10 }}>
-                <Text style={styles.inputLabel}>Vencimiento (MM/AA)</Text>10
+                <Text style={styles.inputLabel}>Vencimiento (MMAA)</Text>
                 <TextInputMask
                   refInput={(ref) => this.myDate = ref}
                   type={'datetime'}

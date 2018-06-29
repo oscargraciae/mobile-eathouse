@@ -61,9 +61,9 @@ class Home extends React.Component {
             <Text style={styles.buttonText}>INICIAR SESION</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buttonDefault} onPress={this.handlePressLogin}>
+          {/* <TouchableOpacity style={styles.buttonDefault} onPress={() => this.props.navigation.navigate('AvailableZone', { onlyMap: true })}>
             <Text style={styles.buttonDefaultText}>Ver zonas de entrega disponibles</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </ImageBackground>
     )

@@ -25,6 +25,8 @@ class AddressForm extends React.Component {
     state: '',
     addressMap: '',
     description: '',
+    phone: '',
+    notes: '',
     lat: 0,
     lng: 0,
     errors: {},
@@ -153,13 +155,22 @@ class AddressForm extends React.Component {
             { errors.area && <Text style={styles.error}>{errors.area}</Text> }
   
             <TextInput style={styles.input}
-              placeholder="Codigo Postal"
+              placeholder="Teléfono"
               returnKeyType="next"
               autoCapitalize="none"
-              onChangeText={(zipcode) => this.setState({ zipcode })}
+              keyboardType="numeric"
+              onChangeText={(phone) => this.setState({ phone })}
               placeholderTextColor={Colors.primaryText} 
             />
-            { errors.zipcode && <Text style={styles.error}>{errors.zipcode}</Text> }
+            { errors.phone && <Text style={styles.error}>{errors.phone}</Text> }
+
+            <TextInput style={styles.input}
+              placeholder="Datos adicionales (Opcional)"
+              returnKeyType="next"
+              autoCapitalize="none"
+              onChangeText={(notes) => this.setState({ notes })}
+              placeholderTextColor={Colors.primaryText}
+            />
             
             <TouchableOpacity style={styles.buttonContainer} onPress={this.onSubmit}>
               { !isLoading ? <Text style={styles.buttonText}>GUARDAR</Text> : isLoading && <Text style={styles.buttonText}>CARGANDO...</Text> }

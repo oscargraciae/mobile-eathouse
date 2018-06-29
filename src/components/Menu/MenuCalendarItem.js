@@ -6,21 +6,21 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import { getDaysByMoment, getMomentDateByFormat, getMomentDate } from '../../utils/formatDate';
+import { getDaysByMoment, getMomentDateByFormat, getMomentDate, getMomentDay } from '../../utils/formatDate';
 
 function MenuCalendarItem(props) {
   
   let { day, weekDayName, weekDayNumber, dayTime, } = getDaysByMoment(props.date, "MM-DD-YYYY");
   let selectedDay = getMomentDateByFormat(props.selectedDate, "DD");
 
-  // let currentDate = getMomentDate(Date.now());
+  let currentDate = getMomentDay(Date.now());
   
   let invalidCurrentDate = false;
-  // if(currentDate.format('DD') === weekDayNumber) {
-  //   if(dayTime > "10:00") {
-  //     invalidCurrentDate = true;
-  //   }
-  // }
+  if(currentDate === weekDayNumber) {
+    if(dayTime > "11:00") {
+      invalidCurrentDate = true;
+    }
+  }
 
   return (
     <TouchableOpacity

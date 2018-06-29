@@ -42,6 +42,12 @@ export function getMomentDate(date) {
   return newDate;
 }
 
+export function getMomentDay(date) {
+  moment.locale("es");
+  var newDate = moment(new Date(date), "MM-DD-YYYY").format("DD");
+  return newDate;
+}
+
 export function getMomentDateByFormat(date, format) {
   moment.locale("es");
   var newDate = moment(date, "MM-DD-YYYY", "es").format(format);
