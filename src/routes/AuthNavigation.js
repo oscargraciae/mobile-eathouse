@@ -5,6 +5,7 @@ import axios from 'axios';
 // import Login from '../pages/Login';
 import LoginNav from './Login';
 import AppNavigator from './App';
+import PublicTabs from './PublicTabs';
 
 class AuthNavigation extends Component {
   render() {
@@ -14,7 +15,8 @@ class AuthNavigation extends Component {
       return <AppNavigator />;
     }
 
-    return <LoginNav />;
+    // return <LoginNav />;
+    return <PublicTabs />;
   }
 }
 

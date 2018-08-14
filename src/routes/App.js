@@ -12,8 +12,12 @@ import Checkout from '../screen/Checkout';
 import NewAddress from '../screen/NewAddress';
 import AvailableZone from '../screen/AvailableZone';
 import Addresses from '../screen/Addresses';
+import MenuPublic from '../screen/MenuPublic';
 
 const Root = StackNavigator({ 
+  MenuPublic: {
+    screen: MenuPublic,
+  },
   Tabs: {
     screen: Tabs
   },

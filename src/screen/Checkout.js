@@ -158,6 +158,11 @@ class Checkout extends Component {
               <Text style={styles.btnTextContainer}>CAMBIAR</Text>
             </TouchableOpacity>
           </View>
+          <View style={styles.containerBox}>
+            <Text style={styles.containerTitle}>Horario de entrega</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>12:30pm - 1:30pm</Text>
+            <Text style={{ fontSize: 12, color: '#79776B' }}>*Actualmente solo contamos con este horario de entrega</Text>
+          </View>
           
           <View style={styles.content}>
             <View style={styles.contentItemPrice}>

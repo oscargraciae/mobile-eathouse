@@ -103,6 +103,9 @@ class Menu extends Component {
     });
     return (
       <View style={styles.container}>
+        <View style={styles.alertBox}>
+          <Text>Ordena tus platillos para el MARTES 14 o planifica tu semana.</Text>
+        </View>
         { this.state.deliveryDate && <Calendar deliveryDate={this.state.deliveryDate} changeDay={this.changeDay} /> }
         { this.state.dishes && <List data={this.state.dishes} addCart={this.addCart} deliveryDate={this.state.deliveryDate} /> }
         { this.props.cart.data.length > 0 &&

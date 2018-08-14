@@ -22,7 +22,6 @@ class AvailableZone extends React.Component {
   };
 
   render() {
-    console.log("Propedades--->", this.props.navigation);
     const { onlyMap } = this.props.navigation.state.params;
     return (
       <View style={styles.container}>
@@ -36,6 +35,11 @@ class AvailableZone extends React.Component {
             <Text style={styles.btnCartText}>PROBAR CON OTRA DIRECCÓN</Text>
           </TouchableOpacity>
         }
+
+        { onlyMap &&
+          <Text style={{ height: 60, fontSize: 18, textAlign: 'center' }}>Próximamente más zonas</Text>
+         }
+
       </View>
     )
   }

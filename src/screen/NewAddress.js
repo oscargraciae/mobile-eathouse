@@ -120,6 +120,7 @@ class NewAddress extends Component {
               query={{
                 key: 'AIzaSyA-yTAH4cD5Lq3VDwysl-Me5bBek1phNBY',
                 language: 'es',
+                components: 'country:mx'
               }}
               onPress={this.onSuggestSelect}
               styles={{

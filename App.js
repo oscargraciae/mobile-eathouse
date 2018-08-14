@@ -41,7 +41,8 @@ class App extends Component {
     persistStore(
       store, {
         storage: AsyncStorage,
-        whitelist: [ 'authentication', 'cart' ],
+        // whitelist: [ 'authentication', 'cart' ],
+        whitelist: [ 'authentication' ],
         // transforms: [expireTransform]
       }, () => this.setState({ ready: true })
     );

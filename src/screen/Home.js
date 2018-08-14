@@ -12,6 +12,8 @@ import {
 import Swiper from 'react-native-swiper';
 import Dimensions from 'Dimensions';
 
+import Colors from '../config/Colors';
+
 class Home extends React.Component {
   
   getWidth() {
@@ -43,19 +45,21 @@ class Home extends React.Component {
             <Text style={styles.textTitle}>Elige tu comida</Text>
             <Text style={styles.textDescription}>Selecciona de una variedad de platillos que tenemos disponibles.</Text>
           </View>
-          <View style={styles.slider2}>
+          <View style={styles.slider}>
             <Text style={styles.textTitle}>Ordena o programa</Text>
-            <Text style={styles.textDescription}>Ordena tus platillos o programa por adelantado para la semana. Disponible de Lunes a Viernes.</Text>
+            {/* <Text style={styles.textDescription}>Ordena tus platillos o programa por adelantado para la semana. Disponible de Lunes a Viernes.</Text> */}
+            <Text style={styles.textDescription}>Selecciona de una variedad de platillos que tenemos disponibles.</Text>
           </View>
-          <View style={styles.slider3}>
+          <View style={styles.slider}>
             <Text style={styles.textTitle}>Disfruta tu comida</Text>
-            <Text style={styles.textDescription}>Tu orden será entregada a la puerta de tu casa u oficina entre 12:30 pm y la 1:30 pm</Text>
+            {/* <Text style={styles.textDescription}>Tu orden será entregada a la puerta de tu casa u oficina entre 12:30 pm y la 1:30 pm</Text> */}
+            <Text style={styles.textDescription}>Selecciona de una variedad de platillos que tenemos disponibles.</Text>
           </View>
         </Swiper>
 
         <View style={styles.containerButtons}>
           <TouchableOpacity style={[styles.buttonContainer]} onPress={() => this.props.navigation.navigate('Signup')}>
-            <Text style={styles.buttonText}>CREAR CUENTA</Text>
+            <Text style={styles.buttonText}>CREAR UNA CUENTA</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.buttonContainer, styles.buttonSecondary]} onPress={() => this.props.navigation.navigate('Login')}>
             <Text style={styles.buttonText}>INICIAR SESION</Text>
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonContainer: {
-    backgroundColor: Colors.secondary,
+    backgroundColor: Colors.primary,
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 4,
