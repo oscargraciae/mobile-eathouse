@@ -57,6 +57,11 @@ class MenuPublic extends Component {
     
   }
 
+  changeDay = (deliveryDate) => {
+    const newDate =  formatDateString(deliveryDate, 'YYYY/MM/DD');
+    this.setState({ deliveryDate: newDate });
+  }
+
   addCart = () => {
     this.props.navigation.navigate("Home");
   }

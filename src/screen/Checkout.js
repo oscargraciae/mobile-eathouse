@@ -48,7 +48,6 @@ class Checkout extends Component {
       api.creditCard.getAll(),
     ]);
 
-    console.log("Direcciones--->", address, creditCards);
     if(creditCards.length > 0) {
       this.setState({ 
         isLoading: false, 
@@ -117,10 +116,20 @@ class Checkout extends Component {
 
   render() {
     const { addressSelected, creditCardSelected } = this.state;
+    const { user } = this.props;
+    console.log("USer props-->", user);
     let total = 0;
+    let subtotal = 0;
+    let discount = 0;
     this.props.cart.data.map((item, i) => {
-      total = total + item.total;
+      subtotal = subtotal + item.total;
     });
+    if (user.bussinesId) {
+      discount = subtotal * 0.20;
+    }
+
+    total = subtotal - discount;
+
     const { data } = this.props.cart;
 
     if(this.state.isLoading) {
@@ -131,6 +140,11 @@ class Checkout extends Component {
 
     return (
       <View style={styles.container}>
+        { user.bussinesId &&
+          <View style={styles.alertBox}>
+            <Text style={styles.alertBoxText}>Por formar parte de {user.bussine.name} tienes el 20% de descuento en todos tus pedidos</Text>
+          </View>
+        }
         { this.state.isOpenModalAddress && <AddressModalList show={this.state.isOpenModalAddress} toggle={this._toggelModalAddress} userAddressId={this.state.userAddressId} selected={this._selectedAddress} navigate={this.props.navigation.navigate} {...this.props} /> }
         { this.state.isOpenModalCreditCard && <CreditCardModal show={this.state.isOpenModalCreditCard} toggle={this._toggelModalCreditCard} creditCardId={this.state.creditCardId} selected={this._selectedCreditCard} navigate={this.props.navigation.navigate} /> }
         { this.state.checkoutAlert && <AlertCheckout show={this.state.checkoutAlert} statusCheckout={this.state.statusCheckout} errorMessage={this.state.paymentError} toggle={this._toggleAlertCheckout} paymentSuccess={this.paymentSuccess} /> }
@@ -166,13 +180,19 @@ class Checkout extends Component {
           
           <View style={styles.content}>
             <View style={styles.contentItemPrice}>
-              <Text>Subtototal</Text>
-              <Text>${moneyThousand(total)} MX</Text>
+              <Text>Subtotal</Text>
+              <Text>${moneyThousand(subtotal)} MX</Text>
             </View>
             <View style={styles.contentItemPrice}>
               <Text>Costo de envío</Text>
-              <Text>$0 MX</Text>
+              <Text>GRATIS</Text>
             </View>
+            { user.bussinesId &&
+              <View style={styles.contentItemPrice}>
+                <Text>Descuento</Text>
+                <Text>-${discount} MX</Text>
+              </View>
+            }
             <View style={styles.contentItemPrice}>
               <Text style={{ fontWeight: 'bold' }}>Total</Text>
               <Text style={{ fontWeight: 'bold' }}>${moneyThousand(total)} MX</Text>
@@ -249,11 +269,19 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: '#a1a7b0'
   },
+  alertBox: {
+    backgroundColor: '#FEC828',
+    padding: 10,
+  },
+  alertBoxText: {
+    color: '#42413E',
+  }
 });
 
 const mapStateToProps = (state) => {
   return {
     cart: state.cart,
+    user: state.user,
   }
 }
 

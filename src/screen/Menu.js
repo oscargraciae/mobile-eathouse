@@ -29,6 +29,7 @@ class Menu extends Component {
     deliveryDate: null,
     isLoading: true,
     showModaladdress: false,
+    isLater: false,
   }
 
   componentDidMount() {
@@ -44,21 +45,11 @@ class Menu extends Component {
         newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 2);
       }
 
-      this.setState({ deliveryDate: newDate, isTime: false });
+      this.setState({ deliveryDate: newDate });
     } else {
       const newDate = formatDateString(new Date(Date.now()), 'YYYY/MM/DD');
-      this.setState({ deliveryDate: newDate, isTime: true });
+      this.setState({ deliveryDate: newDate, isLater: true });
     }
-
-    // let newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 1);
-    // let date = getMomentDate();
-    // if(date.day() === 6) {
-    //   newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 3);
-    // } else if(date.day() === 0) {
-    //   newDate = getDateSumDays(new Date(Date.now()), 'YYYY/MM/DD', 2);
-    // }
-
-    // this.setState({ deliveryDate: newDate, isTime: false });
 
     this.setState({ isLoading: false });
   }
@@ -66,7 +57,6 @@ class Menu extends Component {
   changeDay = (deliveryDate) => {
     const newDate =  formatDateString(deliveryDate, 'YYYY/MM/DD');
     this.setState({ deliveryDate: newDate });
-
   }
 
   async initialFetch() {
@@ -103,9 +93,14 @@ class Menu extends Component {
     });
     return (
       <View style={styles.container}>
-        <View style={styles.alertBox}>
-          <Text>Ordena tus platillos para el MARTES 14 o planifica tu semana.</Text>
-        </View>
+        { !this.state.isLater ?
+          <View style={styles.alertBox}>
+            <Text style={styles.alertBoxText}>Ordena tus platillos para el día de mañana o planifica tu semana.</Text>
+          </View> :
+          <View style={styles.alertBox}>
+            <Text style={styles.alertBoxText}>¡Todavía estas a tiempo! Los pedidos para entregar hoy cierran a las 11:00am</Text>
+          </View>
+        }
         { this.state.deliveryDate && <Calendar deliveryDate={this.state.deliveryDate} changeDay={this.changeDay} /> }
         { this.state.dishes && <List data={this.state.dishes} addCart={this.addCart} deliveryDate={this.state.deliveryDate} /> }
         { this.props.cart.data.length > 0 &&
@@ -137,6 +132,13 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 12,
+  },
+  alertBox: {
+    backgroundColor: '#3BCF75',
+    padding: 10,
+  },
+  alertBoxText: {
+    color: '#FFF',
   }
 });
 

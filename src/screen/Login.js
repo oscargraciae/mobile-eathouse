@@ -8,6 +8,7 @@ import Colors from '../config/Colors';
 import api from '../config/api';
 import validation from '../validations/login';
 import { login } from '../actions/authentication';
+import { setUser } from '../actions/user';
 
 
 // create a component
@@ -25,10 +26,14 @@ class Login extends Component {
       this.setState({ isLoading: true });
       const { email, password } = this.state;
       const response = await api.user.authentication(email, password);
+      
       const { ok, user } = response;
       if(ok) {
+        console.log("USER-->", user)
         this.setState({ isLoading: false });
         this.props.login(user.token);
+        const us = await api.user.get(user.id);
+        this.props.setUser(us);
         // this.props.navigation.navigate('Menu'); 
       } else {
         Alert.alert('Aviso', "Verifica tu correo y contraseña", [ {text: 'Aceptar'} ] );
@@ -170,4 +175,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default connect(null, { login })(Login);
+export default connect(null, { login, setUser })(Login);

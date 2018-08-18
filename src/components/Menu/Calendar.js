@@ -12,7 +12,6 @@ class Calendar extends React.Component {
 
   state = {
     weekDays: [],
-    // selectedDate: new Date(Date.now()),
     selectedDate: new Date(this.props.deliveryDate)
   }
 
@@ -63,6 +62,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    marginTop: 10,
   }
 })
 
