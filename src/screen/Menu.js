@@ -12,12 +12,14 @@ import decode from 'jwt-decode';
 // import local libraries
 import api from '../config/api';
 import { addToCart } from '../actions/cart';
+import { setUser } from '../actions/user';
 import Colors from '../config/Colors';
 import { formatDateString, getDateSumDays, getMomentDate } from '../utils/formatDate';
 
 // import components
 import List from '../components/Menu/List';
 import Calendar from '../components/Menu/Calendar';
+import LoadingView from '../components/LoadingView';
 
 // create a component
 class Menu extends Component {
@@ -66,10 +68,12 @@ class Menu extends Component {
       api.user.get(tokenDecode.id),
     ]);
 
-    this.setState({ dishes, user, showModaladdress: !user.withAddress });
+    this.props.setUser(user);
+
+    this.setState({ dishes, user, showModaladdress: !user.withAddress, isLoading: false });
     
     if(!user.withAddress) {
-      this.props.navigation.navigate('NewAddress');
+      this.props.navigation.navigate('AddressHome');
     }
   }
 
@@ -91,6 +95,13 @@ class Menu extends Component {
     this.props.cart.data.map((item, i) => {
       total = total + item.total;
     });
+
+    if(this.state.isLoading) {
+      return (
+        <LoadingView />
+      )
+    }
+    
     return (
       <View style={styles.container}>
         { !this.state.isLater ?
@@ -149,4 +160,4 @@ const mapStateToProps = (state) => {
   }
 };
 
-export default connect(mapStateToProps, { addToCart })(Menu);
+export default connect(mapStateToProps, { addToCart, setUser })(Menu);

@@ -5,9 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView
+  ScrollView,
+  Alert,
 } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import MapView,{ PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
 // import libraries
@@ -15,6 +17,8 @@ import validation from '../validations/address';
 import api from '../config/api';
 import { isPointAvailable } from '../utils/geospatial';
 
+const latitudeDelta = 0.00522;
+const longitudeDelta = 0.00522;
 class NewAddress extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -44,19 +48,47 @@ class NewAddress extends Component {
     errors: {},
     isLoading: false,
     addressNotAvailable: false,
+    isViewMap: true,
+    region: {
+      latitude: null,
+      longitude: null,
+      latitudeDelta: null,
+      longitudeDelta: null,
+    },
   }
+
+  // componentWillMount() {
+  //   navigator.geolocation.getCurrentPosition((position) => {
+  //     console.log("Datos de ubicacion--->", position);
+  //     const { latitude, longitude } = position.coords;
+  //     // const region = getRegionForCoordinates([{ latitude, longitude }, {latitude: Number(item.lat), longitude: Number(item.lng)}]);
+  //     const region = { latitude: Number(latitude), longitude: Number(longitude), latitudeDelta, longitudeDelta };
+  //     this.setState({ region, lat: latitude, lng: longitude });
+  //   });
+
+  //   console.log("Antes", this.state)
+  // }
 
   onSuggestSelect = (data, details = null) => {
     console.log(data, details);
     const { lat, lng } = details.geometry.location;
+    const region = { latitude: Number(lat), longitude: Number(lng), latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta };
+    this.setState({ addressMap: data.description, lat, lng, region }, () => {
+      this.fillInAddress(details);
+    });
+  }
+
+  onConfirmLocation = () => {
+    const { lat, lng } = this.state;
     if(isPointAvailable([lng, lat])) {
-      this.setState({ isAutocomplete: false, addressMap: data.description, lat, lng, addressNotAvailable: false }, () => {
-        this.fillInAddress(details);
-      });
+      this.setState({ isAutocomplete: false, isViewMap: false, addressNotAvailable: false });
     } else {
-      this.props.navigation.navigate('AvailableZone', { onlyMap: false });
+      this.setState({ userLocation: [lat, lng], address: '' });
+      Alert.alert('Aviso', 'Lo sentimos, aún no realizamos entregas en tu dirección.', [
+        {text: 'Ver cobertura', onPress: () => this.props.navigation.navigate('AvailableZone', { onlyMap: true })},
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
     }
-    
   }
 
   onSubmit = async () => {
@@ -67,7 +99,8 @@ class NewAddress extends Component {
       
       if(ok) {
         this.setState({ isLoading: false }); 
-        this.props.navigation.goBack();
+        // this.props.navigation.goBack();
+        this.props.navigation.replace("Tabs");
 
       } else {
         console.log("Ha ocurrido un error");
@@ -104,16 +137,21 @@ class NewAddress extends Component {
     }
   }
 
+  onRegionChange = region => {
+    this.setState({ region });
+  }
+
   render() {
     const { errors, isLoading } = this.state;
-    return (
-      <ScrollView style={styles.container}>
-        { this.state.isAutocomplete ?
-          <View style={styles.autocomplete}>
+    const { region, lat, lng, deliveryTime } = this.state;
+    if(this.state.isViewMap) {
+      return (
+        <View style={styles.autocomplete}>
             <GooglePlacesAutocomplete
               placeholder='Escribe la dirección (Colonia, Ciudad, Estado)'
               minLength={2}
-              autoFocus
+              autoFocus={true}
+              enablePoweredByContainer={false}
               returnKeyType={'default'}
               fetchDetails={true}
               // nearbyPlacesAPI="None"
@@ -124,79 +162,115 @@ class NewAddress extends Component {
               }}
               onPress={this.onSuggestSelect}
               styles={{
+                container: {
+                  position: 'absolute',
+                  top: 10, 
+                  zIndex: 2,
+                  backgroundColor: '#FFFFFF',
+                  width: 350,
+                  left: '5%',
+                  width: '90%',
+                },
                 textInputContainer: {
                   backgroundColor: '#FFF',
                   borderTopWidth: 0,
                 },
+                description: {
+                  fontSize: 12,
+                },
                 textInput: {
                   marginLeft: 0,
                   marginRight: 0,
-                  // height: 38,
-                  color: '#333',
-                  fontSize: 16,
-                  // borderBottomWidth: 1,
-                  // borderColor: 'red',
+                  color: '#5d5d5d',
+                  fontSize: 14
                 },
                 predefinedPlacesDescription: {
-                  color: '#1faadb'
+                  color: '#1faadb',
+                  fontSize: 21,
                 },
               }}
               currentLocation={false}
               currentLocationLabel="Ubicación actual"
               filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
             />
-          </View> :
-          <View style={styles.formContent}>
-            <TouchableOpacity onPress={() => this.setState({ isAutocomplete: true })}>
-              <Text style={styles.input}>{this.state.addressMap}</Text>
-            </TouchableOpacity>
-            <TextInput style={styles.input}
-              placeholder="Calle y No."
-              returnKeyType="next"
-              autoCapitalize="none"
-              onChangeText={(street) => this.setState({ street })}
-              placeholderTextColor={Colors.primaryText} 
-            />
-            { errors.street && <Text style={styles.error}>{errors.street}</Text> }
-  
-            <TextInput style={styles.input}
-              placeholder="Colonia"
-              returnKeyType="next"
-              autoCapitalize="none"
-              onChangeText={(area) => this.setState({ area })}
-              placeholderTextColor={Colors.primaryText} 
-            />
-            { errors.area && <Text style={styles.error}>{errors.area}</Text> }
-  
-            <TextInput style={styles.input}
-              placeholder="Teléfono"
-              returnKeyType="next"
-              autoCapitalize="none"
-              keyboardType="numeric"
-              onChangeText={(phone) => this.setState({ phone })}
-              placeholderTextColor={Colors.primaryText} 
-            />
-            { errors.phone && <Text style={styles.error}>{errors.phone}</Text> }
+            <View style={styles.mapContainer}>
+              {region.latitude &&
+                <View style={{ flex: 1 }}>
+                  <MapView
+                    style={styles.map}
+                    provider={PROVIDER_GOOGLE}
+                    region={region}
+                    scrollEnabled
+                    zoomEnabled
+                    onRegionChangeComplete={this.onRegionChange}
+                    rotateEnabled={false}
+                  />
+                <View pointerEvents="none" style={styles.markerFixed}>
+                  <Ionicon name="ios-pin" size={40} color="red" />
+                </View>
 
-            <TextInput style={styles.input}
-              placeholder="Datos adicionales (Opcional)"
-              returnKeyType="next"
-              autoCapitalize="none"
-              onChangeText={(notes) => this.setState({ notes })}
-              placeholderTextColor={Colors.primaryText}
-            />
-            
-            <TouchableOpacity style={styles.buttonContainer} onPress={this.onSubmit}>
-              { !isLoading ? <Text style={styles.buttonText}>GUARDAR</Text> : isLoading && <Text style={styles.buttonText}>CARGANDO...</Text> }
-            </TouchableOpacity>
-
-            { this.props.onClose &&
-              <TouchableOpacity style={styles.buttonDefault} onPress={this.props.toggle}>
-                <Text style={styles.buttonDefaultText}>CANCELAR</Text>
-              </TouchableOpacity>
-            }    
+                <TouchableOpacity style={styles.buttonContainerFixed} onPress={this.onConfirmLocation}>
+                  <Text style={styles.buttonText}>Confirmar</Text>
+                </TouchableOpacity>
+              </View>
+            }
           </View>
-        }
+        </View>
+      )
+    }
+
+    return (
+      <ScrollView style={styles.container}>    
+        <View style={styles.formContent}>
+          <TouchableOpacity onPress={() => this.setState({ isAutocomplete: true })}>
+            <Text style={styles.input}>{this.state.addressMap}</Text>
+          </TouchableOpacity>
+          <TextInput style={styles.input}
+            placeholder="Calle y No."
+            returnKeyType="next"
+            autoCapitalize="none"
+            onChangeText={(street) => this.setState({ street })}
+            placeholderTextColor={Colors.primaryText} 
+          />
+          { errors.street && <Text style={styles.error}>{errors.street}</Text> }
+
+          <TextInput style={styles.input}
+            placeholder="Colonia"
+            returnKeyType="next"
+            autoCapitalize="none"
+            onChangeText={(area) => this.setState({ area })}
+            placeholderTextColor={Colors.primaryText} 
+          />
+          { errors.area && <Text style={styles.error}>{errors.area}</Text> }
+
+          <TextInput style={styles.input}
+            placeholder="Teléfono"
+            returnKeyType="next"
+            autoCapitalize="none"
+            keyboardType="numeric"
+            onChangeText={(phone) => this.setState({ phone })}
+            placeholderTextColor={Colors.primaryText} 
+          />
+          { errors.phone && <Text style={styles.error}>{errors.phone}</Text> }
+
+          <TextInput style={styles.input}
+            placeholder="Datos adicionales (Opcional)"
+            returnKeyType="next"
+            autoCapitalize="none"
+            onChangeText={(notes) => this.setState({ notes })}
+            placeholderTextColor={Colors.primaryText}
+          />
+          
+          <TouchableOpacity style={styles.buttonContainer} onPress={this.onSubmit}>
+            { !isLoading ? <Text style={styles.buttonText}>GUARDAR</Text> : isLoading && <Text style={styles.buttonText}>CARGANDO...</Text> }
+          </TouchableOpacity>
+
+          { this.props.onClose &&
+            <TouchableOpacity style={styles.buttonDefault} onPress={this.props.toggle}>
+              <Text style={styles.buttonDefaultText}>CANCELAR</Text>
+            </TouchableOpacity>
+          }    
+        </View>
       </ScrollView>
     )
   }
@@ -247,7 +321,40 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'left',
     width: 300,
-  }
+  },
+  mapContainer: {
+    flex: 1,
+  },
+  map: {
+    flex:1,
+  },
+  marker: {
+    height: 48,
+    width: 48
+  },
+  markerFixed: {
+    left: '50%',
+    marginLeft: -24,
+    marginTop: -48,
+    position: 'absolute',
+    top: '50%'
+  },
+  buttonContainerFixed: {
+    position: 'absolute',
+    bottom: 10,
+    left: '5%',
+    width: '90%',
+    backgroundColor: Colors.secondary,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 4,
+    marginTop: 20,
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: 'white',
+    fontWeight: '700'
+  },
 });
 
 //make this component available to the app

@@ -36,6 +36,7 @@ class Checkout extends Component {
     checkoutAlert: false,
     statusCheckout: 0,
     isSendingOrder: false,
+    creditCards: [],
   }
 
   componentDidMount() {
@@ -54,14 +55,16 @@ class Checkout extends Component {
         addressSelected: address[0],
         userAddressId: address[0].id,
         creditCardSelected: creditCards[0],
-        creditCardId: creditCards[0].id
+        creditCardId: creditCards[0].id,
+        creditCards,
       });
     } else {
       this.setState({ 
         isLoading: false, 
         addressSelected: address[0],
         userAddressId: address[0].id,
-        isOpenModalCreditCard: true,
+        isOpenModalCreditCard: false,
+        creditCards,
       });
     }
   }
@@ -169,7 +172,7 @@ class Checkout extends Component {
             <Text style={styles.containerTitle}>Metodo de Pago</Text>
             { creditCardSelected && <Text style={styles.containerDescription}>{creditCardSelected.brand} **** **** **** {creditCardSelected.last4}</Text> }
             <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isOpenModalCreditCard: true })}>
-              <Text style={styles.btnTextContainer}>CAMBIAR</Text>
+              <Text style={styles.btnTextContainer}>{this.state.creditCards.length === 0 ? 'AGREGAR MÉTODO DE PAGO' : 'CAMBIAR' } </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.containerBox}>

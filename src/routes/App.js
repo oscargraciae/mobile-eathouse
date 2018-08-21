@@ -13,6 +13,8 @@ import NewAddress from '../screen/NewAddress';
 import AvailableZone from '../screen/AvailableZone';
 import Addresses from '../screen/Addresses';
 import MenuPublic from '../screen/MenuPublic';
+import AddressHome from '../screen/AddressHome';
+import BusinessAddress from '../screen/BusinessAddress';
 
 const Root = StackNavigator({ 
   MenuPublic: {
@@ -34,6 +36,12 @@ const Root = StackNavigator({
   },
   NewAddress: {
     screen: NewAddress,
+  },
+  AddressHome: {
+    screen: AddressHome,
+  },
+  BusinessAddress: {
+    screen: BusinessAddress,
   },
   AvailableZone: {
     screen: AvailableZone,

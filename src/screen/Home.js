@@ -12,13 +12,36 @@ import {
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import Dimensions from 'Dimensions';
+import { LoginManager, AccessToken } from 'react-native-fbsdk';
+import { connect } from 'react-redux';
 
 import Colors from '../config/Colors';
+import api from '../config/api';
+import { login } from '../actions/authentication';
+import { setUser } from '../actions/user';
 
+// var FBLoginButton = require('../components/Home/FBLoginButton');
 class Home extends React.Component {
   
   getWidth() {
     return Dimensions.get('window').width;
+  }
+
+  _onLoginFbPress = async () => {
+    const res = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
+
+    if(res.grantedPermissions && !res.isCancelled) {
+      const data = await AccessToken.getCurrentAccessToken();
+      const response = await api.user.authenticationFacebook(data.accessToken);
+
+      const { ok, user } = response;
+      if(ok) {
+        this.setState({ isLoading: false });
+        this.props.login(user.token);
+        const us = await api.user.get(user.id);
+        this.props.setUser(us);
+      } 
+    }
   }
 
   render() {
@@ -36,10 +59,10 @@ class Home extends React.Component {
         <View style={styles.containerButtons}>
           <TouchableOpacity style={[styles.buttonContainer]} onPress={() => this.props.navigation.navigate('Login')}>
             <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity style={[styles.buttonContainer, styles.buttonFacebook]} onPress={() => this.props.navigation.navigate('Login')}>
+          </TouchableOpacity>          
+          <TouchableOpacity style={[styles.buttonContainer, styles.buttonFacebook]} onPress={this._onLoginFbPress}>
             <Text style={styles.buttonText}>INICIAR SESIÓN CON FACEBOOK</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
           <View style={{ width: 300, alignItems: 'center', paddingVertical: 10 }}>
             <Text>o</Text>
           </View>
@@ -159,4 +182,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Home;
+export default connect(null, { login, setUser })(Home);
