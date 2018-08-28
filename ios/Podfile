@@ -45,6 +45,9 @@ target 'eathouse' do
   pod 'FBSDKLoginKit'
   pod 'FBSDKShareKit'
   
+
+  pod 'react-native-onesignal', :path => '../node_modules/react-native-onesignal'
+
   target 'eathouseTests' do
     inherit! :search_paths
     # Pods for testing

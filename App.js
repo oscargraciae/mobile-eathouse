@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
-// import createExpirationTransform from 'redux-persist-transform-expire';
+import OneSignal from 'react-native-onesignal';
 
 // import local libraries
 import store from './src/redux/store';
@@ -31,19 +31,40 @@ class App extends Component {
     ready: false,
   }
 
-   componentDidMount() {
-    // const expireTransform = createExpirationTransform({
-    //   expireKey: 'persistExpiresAt',
-    //   defaultState: {
-    //     data: [],
-    //   }
-    // });
+  componentWillMount() {
+    OneSignal.init("ca55c3ba-aa54-4824-8c7f-52c2b17b6ee3");
+
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
+  }
+
+  componentWillUnmount() {
+    OneSignal.removeEventListener('received', this.onReceived);
+    OneSignal.removeEventListener('opened', this.onOpened);
+    OneSignal.removeEventListener('ids', this.onIds);
+  }
+
+  onReceived(notification) {
+    console.log("Notification received: ", notification);
+  }
+
+  onOpened(openResult) {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  }
+
+  onIds(device) {
+    console.log('Device info: ', device);
+  }
+
+  componentDidMount() {
     persistStore(
       store, {
         storage: AsyncStorage,
-        // whitelist: [ 'authentication', 'cart' ],
         whitelist: [ 'authentication' ],
-        // transforms: [expireTransform]
       }, () => this.setState({ ready: true })
     );
   }
