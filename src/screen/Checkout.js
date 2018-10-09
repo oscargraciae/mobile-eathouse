@@ -73,9 +73,23 @@ class Checkout extends Component {
     this.setState({ isSendingOrder: true });
     const { userAddressId, creditCardId } = this.state;
     const { data } = this.props.cart;
+
+    let isDiscount = false;
+    let quantityTotal = 0;
+    if (data.length > 0) {
+      data.map((item, i) => {
+        quantityTotal = quantityTotal + item.quantity;
+      });
+
+      if(quantityTotal >= 5 || this.props.user.bussinesId) {
+        isDiscount = true;
+      }
+    }
+
     const order = {
       userAddressId,
       creditCardId,
+      isDiscount: isDiscount,
       orderDetails: data,
     }
     console.log("Datos enviados-->", order);
@@ -124,11 +138,23 @@ class Checkout extends Component {
     let total = 0;
     let subtotal = 0;
     let discount = 0;
+    let quantityTotal = 0;
+
     this.props.cart.data.map((item, i) => {
       subtotal = subtotal + item.total;
     });
     if (user.bussinesId) {
       discount = subtotal * 0.20;
+    }
+
+    if (this.props.cart.data.length > 0) {
+      this.props.cart.data.map((item, i) => {
+        quantityTotal = quantityTotal + item.quantity;
+      });
+  
+      if(quantityTotal >= 5) {
+        discount = subtotal * 0.20;
+      }
     }
 
     total = subtotal - discount;
@@ -146,6 +172,11 @@ class Checkout extends Component {
         { user.bussinesId &&
           <View style={styles.alertBox}>
             <Text style={styles.alertBoxText}>Por formar parte de {user.bussine.name} tienes el 20% de descuento en todos tus pedidos</Text>
+          </View>
+        }
+        { !user.bussinesId &&
+          <View style={styles.alertBox}>
+            <Text style={styles.alertBoxText}>Obtén un 20% de descuento en la compra de 5 platillos o más.</Text>
           </View>
         }
         { this.state.isOpenModalAddress && <AddressModalList show={this.state.isOpenModalAddress} toggle={this._toggelModalAddress} userAddressId={this.state.userAddressId} selected={this._selectedAddress} navigate={this.props.navigation.navigate} {...this.props} /> }
@@ -191,6 +222,12 @@ class Checkout extends Component {
               <Text>GRATIS</Text>
             </View>
             { user.bussinesId &&
+              <View style={styles.contentItemPrice}>
+                <Text>Descuento</Text>
+                <Text>-${discount} MX</Text>
+              </View>
+            }
+            { quantityTotal >= 5 &&
               <View style={styles.contentItemPrice}>
                 <Text>Descuento</Text>
                 <Text>-${discount} MX</Text>
