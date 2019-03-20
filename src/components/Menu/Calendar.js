@@ -38,7 +38,7 @@ class Calendar extends React.Component {
   render() {
     const { weekDays } = this.state;
     return (
-      <View>
+      <View style={styles.containerCalendar}>
         <Text style={styles.title}>DÍA DE ENTREGA</Text>
         <ScrollView style={styles.container} horizontal>
           { weekDays.map((item, index) => {
@@ -54,6 +54,9 @@ class Calendar extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  containerCalendar: {
+    marginBottom: 10,
+  },
   container: {
     flexDirection: 'row',
   },
@@ -63,6 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     marginTop: 10,
+    fontSize: 12,
   }
 })
 

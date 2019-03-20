@@ -5,7 +5,8 @@ import {
   Text, 
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -37,6 +38,8 @@ class Checkout extends Component {
     statusCheckout: 0,
     isSendingOrder: false,
     creditCards: [],
+    methodPayment: 1,
+    paymentChange: 0,
   }
 
   componentDidMount() {
@@ -70,39 +73,17 @@ class Checkout extends Component {
   }
 
   sendOrder = async () => {
+    const { methodPayment } = this.state;
     this.setState({ isSendingOrder: true });
-    const { userAddressId, creditCardId } = this.state;
-    const { data } = this.props.cart;
-
-    let isDiscount = false;
-    let quantityTotal = 0;
-    if (data.length > 0) {
-      data.map((item, i) => {
-        quantityTotal = quantityTotal + item.quantity;
-      });
-
-      if(quantityTotal >= 5 || this.props.user.bussinesId) {
-        isDiscount = true;
-      }
-    }
-
-    const order = {
-      userAddressId,
-      creditCardId,
-      isDiscount: isDiscount,
-      orderDetails: data,
-    }
-    console.log("Datos enviados-->", order);
-    const response = await api.orders.create(order);
-    console.log("Respuesta save--->", response);
-    if(response.ok) {
-      this.setState({ isSendingOrder: false, checkoutAlert: true, statusCheckout: 0 }, () => {
-        this.props.clearCart();
-      });
-    } else {
-      const { details } = response.err;
-      console.log("Respuesta de error payment--->",  details[0].message);
-      this.setState({ paymentError:  details[0].message, checkoutAlert: true, isSendingOrder: false, statusCheckout: 1 });
+    
+    switch (methodPayment) {
+      case 1:
+        this.orderCard();
+        break;
+      case 2:
+        this.orderCash();
+      default:
+        break;
     }
   }
 
@@ -129,6 +110,87 @@ class Checkout extends Component {
   paymentSuccess = () => {
     this.setState({ checkoutAlert: false });
     this.props.navigation.navigate('Menu');
+  }
+
+  async orderCard() {
+    console.log("Pagado con tarjeta");
+
+    const { userAddressId, creditCardId } = this.state;
+    const { data } = this.props.cart;
+
+    let isDiscount = false;
+    let quantityTotal = 0;
+    if (data.length > 0) {
+      data.map((item, i) => {
+        quantityTotal = quantityTotal + item.quantity;
+      });
+
+      if(quantityTotal >= 5 || this.props.user.bussinesId) {
+        isDiscount = true;
+      }
+    }
+
+    const order = {
+      userAddressId,
+      creditCardId,
+      deviceType: 'mobile',
+      paymentMethod: 1,
+      paymentChange: 0,
+      isDiscount: isDiscount,
+      orderDetails: data,
+    }
+    console.log("Datos enviados-->", order);
+    const response = await api.orders.create(order);
+    console.log("Respuesta save--->", response);
+    if(response.ok) {
+      this.setState({ isSendingOrder: false, checkoutAlert: true, statusCheckout: 0 }, () => {
+        this.props.clearCart();
+      });
+    } else {
+      const { details } = response.err;
+      console.log("Respuesta de error payment--->",  details[0].message);
+      this.setState({ paymentError:  details[0].message, checkoutAlert: true, isSendingOrder: false, statusCheckout: 1 });
+    }
+  }
+
+  async orderCash() {
+    console.log("Pagado con efectivo!");
+
+    const { userAddressId, paymentChange } = this.state;
+    const { data } = this.props.cart;
+
+    let isDiscount = false;
+    let quantityTotal = 0;
+    if (data.length > 0) {
+      data.map((item, i) => {
+        quantityTotal = quantityTotal + item.quantity;
+      });
+
+      if(quantityTotal >= 5 || this.props.user.bussinesId) {
+        isDiscount = true;
+      }
+    }
+
+    const order = {
+      userAddressId,
+      deviceType: 'mobile',
+      paymentMethod: 2,
+      paymentChange,
+      isDiscount: isDiscount,
+      orderDetails: data,
+    }
+    console.log("Datos enviados-->", order);
+    const response = await api.orders.createCash(order);
+    console.log("Respuesta save--->", response);
+    if(response.ok) {
+      this.setState({ isSendingOrder: false, checkoutAlert: true, statusCheckout: 0 }, () => {
+        this.props.clearCart();
+      });
+    } else {
+      const { details } = response.err;
+      console.log("Respuesta de error payment--->",  details[0].message);
+      this.setState({ paymentError:  details[0].message, checkoutAlert: true, isSendingOrder: false, statusCheckout: 1 });
+    }
   }
 
   render() {
@@ -200,11 +262,37 @@ class Checkout extends Component {
             }) }
           </View>
           <View style={styles.containerBox}>
-            <Text style={styles.containerTitle}>Metodo de Pago</Text>
-            { creditCardSelected && <Text style={styles.containerDescription}>{creditCardSelected.brand} **** **** **** {creditCardSelected.last4}</Text> }
-            <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isOpenModalCreditCard: true })}>
-              <Text style={styles.btnTextContainer}>{this.state.creditCards.length === 0 ? 'AGREGAR MÉTODO DE PAGO' : 'CAMBIAR' } </Text>
-            </TouchableOpacity>
+            <Text style={styles.containerTitle}>Método de Pago</Text>
+            <View style={styles.methodControls}>
+              <TouchableOpacity style={[styles.methodControlBtn, (this.state.methodPayment == 1 && { borderColor: Colors.primary })]} onPress={() => this.setState({ methodPayment: 1 })}>
+                <Text style={(this.state.methodPayment == 1 && { color: Colors.primary })}>Tarjeta de crédito/debito</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.methodControlBtn, (quantityTotal < 5 ? styles.methodControlBtnDisabled : null), (this.state.methodPayment == 2 && { borderColor: Colors.primary })]} onPress={() => this.setState({ methodPayment: 2 })} disabled={quantityTotal < 5}>
+                <Text style={[(quantityTotal < 5 && { color: '#DDDDDD' }), (this.state.methodPayment == 2 && { color: Colors.primary })]}>Efectivo</Text>
+              </TouchableOpacity>
+            </View>
+            { this.state.methodPayment === 1 &&
+              <View>
+                { creditCardSelected && <Text style={styles.containerDescription}>{creditCardSelected.brand} **** **** **** {creditCardSelected.last4}</Text> }
+                <TouchableOpacity style={styles.btnContainer} onPress={() => this.setState({ isOpenModalCreditCard: true })}>
+                  <Text style={styles.btnTextContainer}>{this.state.creditCards.length === 0 ? 'AGREGAR MÉTODO DE PAGO' : 'CAMBIAR TARJETA' } </Text>
+                </TouchableOpacity>
+              </View>
+            }
+            { this.state.methodPayment === 2 &&
+              <View>
+                <Text style={styles.inputLabel}>¿Cambio de cuanto?</Text>
+                <Text>Escribe cuanto vas a pagar en efectivo para envíar tu cambio.</Text>
+                <TextInput style={styles.input}
+                  placeholder="0 MXN"
+                  returnKeyType="next"
+                  autoCapitalize="none"
+                  onChangeText={(paymentChange) => this.setState({ paymentChange })}
+                  placeholderTextColor="#DDD"
+                />
+              </View>
+            }
+            <Text style={{ fontSize: 12, color: '#79776B' }}>*El pago en efectivo está disponible en la compra de 5 platillos o más</Text>
           </View>
           <View style={styles.containerBox}>
             <Text style={styles.containerTitle}>Horario de entrega</Text>
@@ -239,11 +327,21 @@ class Checkout extends Component {
             </View>
           </View>
         </ScrollView>
-        <View style={[styles.btnCart, (!this.state.creditCardId || !this.state.userAddressId) || this.state.isSendingOrder ? styles.disabled : null]}>
-          <TouchableOpacity onPress={this.sendOrder} disabled={(!this.state.creditCardId || !this.state.userAddressId) || this.state.isSendingOrder}>
-            { this.state.isSendingOrder ? <Text style={styles.btnCartText}>ENVIANDO ORDEN...</Text> : <Text style={styles.btnCartText}>ORDENAR</Text> }
-          </TouchableOpacity>
-        </View>
+        { this.state.methodPayment === 1 &&
+          <View style={[styles.btnCart, (!this.state.creditCardId || !this.state.userAddressId) || this.state.isSendingOrder ? styles.disabled : null]}>
+            <TouchableOpacity onPress={this.sendOrder} disabled={(!this.state.creditCardId || !this.state.userAddressId) || this.state.isSendingOrder}>
+              { this.state.isSendingOrder ? <Text style={styles.btnCartText}>ENVIANDO ORDEN...</Text> : <Text style={styles.btnCartText}>ORDENAR</Text> }
+            </TouchableOpacity>
+          </View>
+        }
+        { this.state.methodPayment === 2 &&
+          <View style={[styles.btnCart, (this.state.paymentChange < total  || !this.state.userAddressId) || this.state.isSendingOrder ? styles.disabled : null]}>
+            <TouchableOpacity onPress={this.sendOrder} disabled={(this.state.paymentChange < total  || !this.state.userAddressId) || this.state.isSendingOrder}>
+              { this.state.isSendingOrder ? <Text style={styles.btnCartText}>ENVIANDO ORDEN...</Text> : <Text style={styles.btnCartText}>ORDENAR</Text> }
+            </TouchableOpacity>
+          </View>
+        }
+
       </View>
     );
   }
@@ -258,6 +356,34 @@ const styles = StyleSheet.create({
   containerBox: {
     backgroundColor: '#FFFFFF',
     padding: 10,
+  },
+  methodControls: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  methodControlBtn: {
+    borderWidth: 1,
+    padding: 12,
+    marginRight: 5,
+    borderRadius: 3,
+  },
+  methodControlBtnDisabled: {
+    borderColor: '#DDDDDD',
+  },
+  input: {
+    // width: 300,
+    width: '100%',
+    backgroundColor:'#ffffff',
+    paddingVertical: 10,
+    fontSize:16,
+    color: Colors.primaryText,
+    marginVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: '#DDD',
+  },
+  inputLabel: {
+    fontWeight: 'bold',
+    fontSize: 11,
   },
   containerTitle: {
     color: Colors.primaryText,
@@ -278,6 +404,7 @@ const styles = StyleSheet.create({
   btnTextContainer: {
     fontWeight: 'bold',
     color: Colors.secondary,
+    fontSize: 12,
   },
   btnCart: {
     backgroundColor: Colors.primary,

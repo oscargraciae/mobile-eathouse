@@ -104,14 +104,14 @@ class Menu extends Component {
     
     return (
       <View style={styles.container}>
-        { !this.state.isLater ?
+        {/* { !this.state.isLater ?
           <View style={styles.alertBox}>
             <Text style={styles.alertBoxText}>Ordena tus platillos para el día de mañana o planifica tu semana.</Text>
           </View> :
           <View style={styles.alertBox}>
             <Text style={styles.alertBoxText}>¡Todavía estas a tiempo! Los pedidos para entregar hoy cierran a las 11:00am</Text>
           </View>
-        }
+        } */}
         { this.state.deliveryDate && <Calendar deliveryDate={this.state.deliveryDate} changeDay={this.changeDay} /> }
         { this.state.dishes && <List data={this.state.dishes} addCart={this.addCart} deliveryDate={this.state.deliveryDate} /> }
         { this.props.cart.data.length > 0 &&
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   btnCart: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.secondary,
     paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',

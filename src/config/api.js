@@ -3,6 +3,8 @@ import axios from 'axios';
 // axios.defaults.baseURL = 'http://localhost:3001/api/v1';
 
 axios.defaults.baseURL = 'https://api.eathouse.mx/api/v1/';
+// axios.defaults.baseURL = 'http://apitest.eathouse.mx/api/v1/';
+// axios.defaults.baseURL = 'http://localhost:8001/api/v1';
 
 const api = {
   user: {
@@ -60,7 +62,9 @@ const api = {
   },
   dish: {
     async getAll() {
-      const response = await axios.get(`/dishes`);
+      console.log("REQ");
+      const response = await axios.get('/dishes');
+      console.log("response----->", response);
       return response.data;
     },
     async get(id) {
@@ -75,6 +79,10 @@ const api = {
     },
     async create(order) {
       const response = await axios.post('/orders', order);
+      return response.data;
+    },
+    async createCash(order) {
+      const response = await axios.post('/orders/cash', order);
       return response.data;
     },
     async estimateOrder(order) {

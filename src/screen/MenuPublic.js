@@ -49,10 +49,10 @@ class MenuPublic extends Component {
   }
 
   async initialFetch() {
-    const [ dishes ] = await Promise.all([
-      api.dish.getAll(),
-    ]);
-
+    console.log("DISHES REQ--->");
+    const dishes = await api.dish.getAll();
+    
+    console.log("DISHES--->", dishes);
     this.setState({ dishes });
     
   }

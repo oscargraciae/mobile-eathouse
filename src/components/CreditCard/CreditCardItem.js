@@ -29,9 +29,12 @@ function CreditCardItem (props) {
 const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
-    paddingVertical: 10,
+    // paddingVertical: 10,
     paddingHorizontal: 10,
-    flexWrap: 'nowrap'
+    flexWrap: 'nowrap',
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     color: Colors.primaryText,
